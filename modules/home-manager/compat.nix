@@ -1,6 +1,6 @@
 # Renames from the v1 option names. Each old option still works and emits a
-# warning that names its replacement. `models` changed from a package to a
-# submodule, so it is not renamed here; see docs/MIGRATION.md.
+# warning that names its replacement. Assigning a package to `models` still
+# works through a coercion in options.nix that warns; see docs/MIGRATION.md.
 { lib, ... }:
 {
   imports = [

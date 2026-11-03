@@ -27,7 +27,6 @@
   outputs =
     inputs@{
       self,
-      nixpkgs,
       home-manager,
       flake-parts,
       nix-devenv,
@@ -49,6 +48,8 @@
         };
         homeManagerModules.default = import ./modules/home-manager { inherit self; };
         homeModules.default = self.homeManagerModules.default;
+        nixosModules.default = import ./modules/nixos.nix { inherit self; };
+        darwinModules.default = import ./modules/darwin.nix { inherit self; };
         templates.default = {
           path = ./templates/default;
           description = "Home Manager configuration using nix-openwhispr";
@@ -119,9 +120,12 @@
                   bash ${self}/scripts/check-publication.sh
                   touch $out
                 '';
+            hm-defaults = import ./checks/hm-defaults.nix { inherit pkgs home-manager self; };
+            hm-v1-compat = import ./checks/hm-v1-compat.nix { inherit pkgs home-manager self; };
+            secrets = import ./checks/secrets.nix { inherit pkgs home-manager self; };
           }
-          // nixpkgs.lib.optionalAttrs isDarwin {
-            module = import ./checks/hm-defaults.nix { inherit pkgs home-manager self; };
+          // pkgs.lib.optionalAttrs (pkgs.stdenv.hostPlatform.system == "x86_64-linux") {
+            nixos-vm = import ./checks/nixos-vm.nix { inherit pkgs home-manager self; };
           };
 
           devShells.default = pkgs.mkShell {

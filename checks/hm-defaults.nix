@@ -3,7 +3,9 @@
   home-manager,
   self,
 }:
-# Darwin Home Manager activation check for the minimal module configuration.
+# Home Manager activation check for the minimal configuration, on every system.
+# The option set matches the README quickstart; the manual block is specific to
+# this fixture and is not part of the quickstart.
 (home-manager.lib.homeManagerConfiguration {
   inherit pkgs;
   modules = [
@@ -11,7 +13,7 @@
     {
       home = {
         username = "ci";
-        homeDirectory = "/Users/ci";
+        homeDirectory = if pkgs.stdenv.hostPlatform.isDarwin then "/Users/ci" else "/home/ci";
         stateVersion = "26.05";
       };
       programs.openwhispr.enable = true;

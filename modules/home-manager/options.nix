@@ -37,15 +37,16 @@ in
       example = literalExpression "pkgs.openwhispr";
     };
 
-    # v1 assigned a package to this option. A package is coerced through a throw
-    # that names the replacement, instead of the submodule's unknown-attribute
-    # error that a derivation would otherwise produce.
+    # The previous module took a package here. A package is still accepted: it
+    # becomes models.package, and evaluation prints a warning naming the new path.
     models = mkOption {
       type =
         types.coercedTo types.package
           (
-            _:
-            throw "programs.openwhispr.models is now a submodule: set programs.openwhispr.models.package instead of assigning a package (see docs/MIGRATION.md)."
+            package:
+            lib.warn
+              "programs.openwhispr.models takes a submodule now; set programs.openwhispr.models.package instead of assigning a package (see docs/MIGRATION.md)."
+              { inherit package; }
           )
           (
             types.submodule {

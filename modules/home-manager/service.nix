@@ -22,6 +22,8 @@ let
       "${cfg.package}/Applications/OpenWhispr.app/Contents/MacOS/OpenWhispr"
     else
       "${cfg.package}/bin/openwhispr";
+  # Upstream's desktop entry passes --no-sandbox on Linux; the wrapper does too.
+  sandboxArgs = lib.optionalString isLinux "--no-sandbox ";
   configuredKeys = lib.filterAttrs (_: path: path != null) cfg.apiKeyFiles;
   apiKeyExports = lib.concatStrings (
     lib.mapAttrsToList (
@@ -48,7 +50,7 @@ let
         done < ${lib.escapeShellArg envFile}
       fi
       ${apiKeyExports}
-      exec ${lib.escapeShellArg appExecutable} "$@"
+      exec ${lib.escapeShellArg appExecutable} ${sandboxArgs}"$@"
     '';
   };
 in
