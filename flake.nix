@@ -49,6 +49,7 @@
         };
         homeManagerModules.default = import ./modules/home-manager { inherit self; };
         homeModules.default = self.homeManagerModules.default;
+        nixosModules.default = import ./modules/nixos.nix { inherit self; };
         templates.default = {
           path = ./templates/default;
           description = "Home Manager configuration using nix-openwhispr";
