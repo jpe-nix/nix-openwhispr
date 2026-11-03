@@ -1,51 +1,14 @@
 # nix-openwhispr
 
+[![CI](https://github.com/jpe-nix/nix-openwhispr/actions/workflows/ci.yml/badge.svg)](https://github.com/jpe-nix/nix-openwhispr/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 Reproducible Nix packaging and lifecycle integration for
 [OpenWhispr](https://github.com/OpenWhispr/openwhispr), a local-first voice
 dictation, meeting transcription, speaker identification, and notes application.
 
 This repository packages the upstream application; it does not fork or
 reimplement the application. The default path is local processing.
-
-## What is available locally
-
-The upstream application provides local speech-to-text, meeting capture,
-speaker diarization, voice fingerprints, notes, semantic search, local
-reasoning, audio import, and a menu-bar/tray application. Local processing is
-not subject to the hosted service's word quota.
-
-- **Dictation and translation**: local models. Uses the local machine's
-  resources.
-- **Meeting transcription**: local models. Requires microphone and system-audio
-  permissions on macOS.
-- **Speaker labels and voice fingerprints**: local ONNX models. Best supported
-  on Apple Silicon.
-- **Notes and semantic search**: local SQLite/vector data. Search quality
-  depends on downloaded models.
-- **AI agent**: local model or explicit provider. Provider credentials are
-  user-selected.
-- **API and MCP**: not exposed locally by this upstream desktop release. The
-  hosted API/MCP service is account-backed and rate-limited.
-- **Team spaces, hosted sharing, billing**: hosted service. Requires the
-  upstream service/account.
-- **Optional remote inference**: explicit LAN endpoint. Must be configured and
-  authenticated separately.
-
-No local word, duration, speaker-count, retention, or subscription limit is
-introduced by this package. Intel Macs are supported for the application where
-upstream dependencies permit; upstream currently documents that local speaker
-identification and voice fingerprints are unavailable on Intel because of its
-ONNX Runtime dependency.
-
-## Platforms
-
-- `aarch64-darwin`: DMG; Home Manager and nix-darwin modules.
-- `x86_64-darwin`: DMG; Home Manager and nix-darwin modules.
-- `x86_64-linux`: AppImage; Home Manager (systemd user service) and NixOS
-  modules.
-
-Every module option and check output is listed in
-[docs/options.md](docs/options.md).
 
 ## Installation
 
@@ -124,6 +87,46 @@ Start the application with the `nix run` command above, or let the login
 service start it. The menu-bar or tray item opens the application's panel,
 where dictation, meetings, and notes are controlled. Its Settings hold the
 processing mode described under Installation.
+
+## What is available locally
+
+The upstream application provides local speech-to-text, meeting capture,
+speaker diarization, voice fingerprints, notes, semantic search, local
+reasoning, audio import, and a menu-bar/tray application. Local processing is
+not subject to the hosted service's word quota.
+
+- **Dictation and translation**: local models. Uses the local machine's
+  resources.
+- **Meeting transcription**: local models. Requires microphone and system-audio
+  permissions on macOS.
+- **Speaker labels and voice fingerprints**: local ONNX models. Best supported
+  on Apple Silicon.
+- **Notes and semantic search**: local SQLite/vector data. Search quality
+  depends on downloaded models.
+- **AI agent**: local model or explicit provider. Provider credentials are
+  user-selected.
+- **API and MCP**: not exposed locally by this upstream desktop release. The
+  hosted API/MCP service is account-backed and rate-limited.
+- **Team spaces, hosted sharing, billing**: hosted service. Requires the
+  upstream service/account.
+- **Optional remote inference**: explicit LAN endpoint. Must be configured and
+  authenticated separately.
+
+No local word, duration, speaker-count, retention, or subscription limit is
+introduced by this package. Intel Macs are supported for the application where
+upstream dependencies permit; upstream currently documents that local speaker
+identification and voice fingerprints are unavailable on Intel because of its
+ONNX Runtime dependency.
+
+## Platforms
+
+- `aarch64-darwin`: DMG; Home Manager and nix-darwin modules.
+- `x86_64-darwin`: DMG; Home Manager and nix-darwin modules.
+- `x86_64-linux`: AppImage; Home Manager (systemd user service) and NixOS
+  modules.
+
+Every module option and check output is listed in
+[docs/options.md](docs/options.md).
 
 ## Options
 
@@ -233,3 +236,7 @@ Development and release before requesting review.
 The Nix integration in this repository is MIT licensed. The packaged
 application and its bundled dependencies retain their upstream licenses; see
 `docs/provenance.md` and the upstream release metadata.
+
+---
+
+Documentation: <https://docs.jacobpevans.com>
