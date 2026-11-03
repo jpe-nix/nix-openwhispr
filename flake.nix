@@ -35,7 +35,18 @@
 
       imports = [ nix-devenv.flakeModules.nix ];
 
-      flake.homeManagerModules.default = import ./modules/home-manager.nix;
+      flake = {
+        overlays.default = final: _prev: {
+          openwhispr = final.callPackage ./pkgs/openwhispr { };
+          openwhispr-models = final.callPackage ./pkgs/openwhispr-models { };
+        };
+        homeManagerModules.default = import ./modules/home-manager.nix;
+        homeModules.default = self.homeManagerModules.default;
+        templates.default = {
+          path = ./templates/default;
+          description = "Home Manager configuration using nix-openwhispr";
+        };
+      };
 
       perSystem =
         {
