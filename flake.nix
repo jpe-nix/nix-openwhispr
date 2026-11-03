@@ -27,7 +27,6 @@
   outputs =
     inputs@{
       self,
-      nixpkgs,
       home-manager,
       flake-parts,
       nix-devenv,
@@ -121,9 +120,9 @@
                   bash ${self}/scripts/check-publication.sh
                   touch $out
                 '';
-          }
-          // nixpkgs.lib.optionalAttrs isDarwin {
-            module = import ./checks/hm-defaults.nix { inherit pkgs home-manager self; };
+            hm-defaults = import ./checks/hm-defaults.nix { inherit pkgs home-manager self; };
+            hm-v1-compat = import ./checks/hm-v1-compat.nix { inherit pkgs home-manager self; };
+            secrets = import ./checks/secrets.nix { inherit pkgs home-manager self; };
           };
 
           devShells.default = pkgs.mkShell {
