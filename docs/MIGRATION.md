@@ -23,8 +23,9 @@ covered in the last section.
   `com.jpe-nix.nix-openwhispr`. Activation runs `launchctl bootout` on the v1
   agent's plist when that file exists, so the old and new agents do not run
   together. The module does not delete the old plist file.
-- The launch agent starts the start wrapper, which execs the application binary.
-  v1 started the binary directly.
+- When `apiKeyFiles` names a key file, the launch agent starts the
+  `openwhispr-start` wrapper, which execs the application binary. Without key
+  files it starts the binary directly, as v1 did.
 - The module does not link or write the application's `.env` file in its data
   directory. Keys already there stay where they are. See
   [the environment section](options.md#environment-and-precedence).
@@ -88,10 +89,14 @@ programs.openwhispr = {
 ## Rollback
 
 Set the input back to `github:dryvist/nix-openwhispr?ref=v1` and rebuild. The
-v1 tag is on that repository, and GitHub redirects the former name to the
-renamed repository. If the v2 launch agent is still loaded after the rollback,
-check it with `launchctl print gui/$(id -u)/com.jpe-nix.nix-openwhispr` and stop
-it with `launchctl bootout gui/$(id -u)/com.jpe-nix.nix-openwhispr`.
+v1 tag is on that repository, and GitHub redirects the former URL to the
+transferred repository. If the v2 launch agent is still loaded after the
+rollback, stop it:
+
+```sh
+launchctl print "gui/$(id -u)/com.jpe-nix.nix-openwhispr"
+launchctl bootout "gui/$(id -u)/com.jpe-nix.nix-openwhispr"
+```
 
 ## Upstream NixOS module users
 

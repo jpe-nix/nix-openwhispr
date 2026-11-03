@@ -95,9 +95,12 @@ The module installs the application and a start wrapper. With
 macOS or a systemd user service on Linux. Set `autostart.enable = false` to
 start the application by hand.
 
-The launch agent runs the start wrapper, which reads the configured environment
-and API key files and then execs the application binary. The application's own
-menu bar controls remain available independently of the launch agent.
+On macOS the launch agent starts the application binary directly and passes the
+non-secret environment through launchd, so privacy prompts name OpenWhispr.
+When `apiKeyFiles` names a key file, the agent runs the start wrapper instead.
+The wrapper reads the key files and then execs the application binary. The
+systemd user service on Linux always runs the wrapper. The application's own
+menu bar controls remain available independently of the login service.
 
 The upstream application owns its menu-bar item and runtime model lifecycle.
 This integration pre-warms the selected local engine and links hash-pinned
