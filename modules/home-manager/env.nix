@@ -22,7 +22,8 @@ let
     VITE_AUTH_URL = cfg.endpoints.authUrl;
     VITE_OPENWHISPR_API_URL = cfg.endpoints.apiUrl;
   };
-  environment = (lib.mapAttrs (_: toEnvString) cfg.settings) // typed;
+  environment =
+    (lib.mapAttrs (_: toEnvString) (lib.filterAttrs (_: value: value != null) cfg.settings)) // typed;
 in
 {
   options.programs.openwhispr.environment = lib.mkOption {

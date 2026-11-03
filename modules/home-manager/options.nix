@@ -13,7 +13,11 @@ let
     mkOption
     types
     ;
-  flakePackage = name: self.packages.${pkgs.stdenv.hostPlatform.system}.${name};
+  # mkPackageOption looks the default up in this set, so the module works
+  # without the overlay applied.
+  flakePackages = self.packages.${pkgs.stdenv.hostPlatform.system};
+  pkgsText = "nix-openwhispr.packages.\${system}";
+  keyValue = pkgs.formats.keyValue { };
   # Each apiKeyFiles field maps to <NAME>_API_KEY, e.g. openai -> OPENAI_API_KEY.
   apiKeyNames = [
     "openai"
@@ -28,12 +32,9 @@ in
   options.programs.openwhispr = {
     enable = mkEnableOption "OpenWhispr";
 
-    package = mkOption {
-      type = types.package;
-      default = flakePackage "openwhispr";
-      defaultText = literalExpression "nix-openwhispr.packages.\${system}.openwhispr";
+    package = lib.mkPackageOption flakePackages "openwhispr" {
+      inherit pkgsText;
       example = literalExpression "pkgs.openwhispr";
-      description = "OpenWhispr application package. Defaults to this flake's package for the host system.";
     };
 
     # v1 assigned a package to this option. A package is coerced through a throw
@@ -49,12 +50,10 @@ in
           (
             types.submodule {
               options = {
-                package = mkOption {
-                  type = types.package;
-                  default = flakePackage "models";
-                  defaultText = literalExpression "nix-openwhispr.packages.\${system}.models";
+                package = lib.mkPackageOption flakePackages "models" {
+                  inherit pkgsText;
                   example = literalExpression "pkgs.openwhispr-models";
-                  description = "Hash-pinned local models linked into the upstream cache layout.";
+                  extraDescription = "Hash-pinned local models linked into the upstream cache layout.";
                 };
 
                 bootstrap = mkOption {
@@ -177,13 +176,7 @@ in
     };
 
     settings = mkOption {
-      type = types.attrsOf (
-        types.oneOf [
-          types.str
-          types.int
-          types.bool
-        ]
-      );
+      inherit (keyValue) type;
       default = { };
       example = {
         WHISPER_MODEL = "whisper-1";

@@ -2,10 +2,11 @@
 #
 # The wrapper reads each configured key file when it runs and exports the value
 # into the process environment; key contents are never written to the store.
-# Both login services start the wrapper, which execs the application binary, so
-# the application process is the final image. Home Manager's launchd module wraps
-# every ProgramArguments entry in /bin/sh (wait4path), so the Darwin agent
-# already runs under /bin/sh and the wrapper adds no further interpreter.
+# The systemd user service always starts the wrapper, which execs the
+# application binary. The launchd agent starts the application binary directly
+# and gets its environment from EnvironmentVariables; it uses the wrapper only
+# when apiKeyFiles names a key file, because launchd cannot read a file into an
+# environment variable.
 {
   config,
   lib,
@@ -82,7 +83,9 @@ in
           enable = true;
           config = {
             Label = "com.jpe-nix.nix-openwhispr";
-            ProgramArguments = [ (lib.getExe startScript) ];
+            ProgramArguments = [
+              (if configuredKeys == { } then appExecutable else lib.getExe startScript)
+            ];
             EnvironmentVariables = cfg.environment;
             RunAtLoad = true;
             KeepAlive = {
