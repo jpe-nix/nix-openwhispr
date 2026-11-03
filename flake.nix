@@ -47,7 +47,7 @@
           openwhispr = final.callPackage ./pkgs/openwhispr { };
           openwhispr-models = final.callPackage ./pkgs/openwhispr-models { };
         };
-        homeManagerModules.default = import ./modules/home-manager.nix;
+        homeManagerModules.default = import ./modules/home-manager { inherit self; };
         homeModules.default = self.homeManagerModules.default;
         templates.default = {
           path = ./templates/default;
@@ -121,7 +121,7 @@
                 '';
           }
           // nixpkgs.lib.optionalAttrs isDarwin {
-            module = import ./checks/hm-defaults.nix { inherit pkgs home-manager; };
+            module = import ./checks/hm-defaults.nix { inherit pkgs home-manager self; };
           };
 
           devShells.default = pkgs.mkShell {

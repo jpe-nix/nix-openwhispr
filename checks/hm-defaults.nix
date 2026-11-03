@@ -1,9 +1,13 @@
-{ pkgs, home-manager }:
-# Darwin Home Manager activation check for the minimal v1 module configuration.
+{
+  pkgs,
+  home-manager,
+  self,
+}:
+# Darwin Home Manager activation check for the minimal module configuration.
 (home-manager.lib.homeManagerConfiguration {
   inherit pkgs;
   modules = [
-    ../modules/home-manager.nix
+    (import ../modules/home-manager { inherit self; })
     {
       home = {
         username = "ci";
