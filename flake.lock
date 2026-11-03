@@ -71,15 +71,15 @@
     "dryvist-github": {
       "flake": false,
       "locked": {
-        "lastModified": 1792823496,
-        "narHash": "sha256-Rfum5E0qITccB8BHKPDXgLYsyzTBzvK4ZL1JpWWZRYM=",
-        "owner": "JacobPEvans",
+        "lastModified": 1792245066,
+        "narHash": "sha256-kN7CtCx4P8Yy4BBqeKCABeomAkLzSJNT5R5XPVkXOTE=",
+        "owner": "dryvist",
         "repo": ".github",
-        "rev": "5ad431c84dabc4d7faebf23a54630bf6efb3cd5b",
+        "rev": "badaa922f8ec0d53c66bfeb1f4b9325d74fc3e5a",
         "type": "github"
       },
       "original": {
-        "owner": "JacobPEvans",
+        "owner": "dryvist",
         "ref": "v1",
         "repo": ".github",
         "type": "github"
@@ -337,7 +337,9 @@
       "inputs": {
         "channels": "channels",
         "devenv": "devenv",
-        "dryvist-github": "dryvist-github",
+        "dryvist-github": [
+          "dryvist-github"
+        ],
         "git-hooks": "git-hooks_2",
         "homelab-contracts": "homelab-contracts",
         "nixpkgs": [
@@ -444,6 +446,7 @@
     },
     "root": {
       "inputs": {
+        "dryvist-github": "dryvist-github",
         "flake-parts": "flake-parts",
         "home-manager": "home-manager",
         "nix-devenv": "nix-devenv",

@@ -13,7 +13,14 @@
     };
     nix-devenv = {
       url = "github:dryvist/nix-devenv?ref=v0";
-      inputs.nixpkgs.follows = "nixpkgs";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        dryvist-github.follows = "dryvist-github";
+      };
+    };
+    dryvist-github = {
+      url = "github:dryvist/.github?ref=v1";
+      flake = false;
     };
   };
 
