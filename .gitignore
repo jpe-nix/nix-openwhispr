@@ -2,4 +2,4 @@
 result
 result-*
 dist/
-
+.pre-commit-config.yaml
