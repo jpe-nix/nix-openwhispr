@@ -44,6 +44,11 @@ pkgs.testers.runNixOSTest {
         imports = [ self.homeManagerModules.default ];
         home.stateVersion = "26.05";
         programs.openwhispr.enable = true;
+        # Fixture-only: see checks/hm-defaults.nix for why the manual is off.
+        manual = {
+          manpages.enable = false;
+          json.enable = false;
+        };
       };
     };
 
