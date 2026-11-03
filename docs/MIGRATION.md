@@ -89,8 +89,8 @@ programs.openwhispr = {
 ## Rollback
 
 Set the input back to `github:dryvist/nix-openwhispr?ref=v1` and rebuild. The
-v1 tag is on that repository, and GitHub redirects the former URL to the
-transferred repository. If the v2 launch agent is still loaded after the
+v1 tags stay on that repository, which remains readable. If the v2 launch
+agent is still loaded after the
 rollback, stop it:
 
 ```sh
