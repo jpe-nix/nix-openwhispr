@@ -57,7 +57,7 @@ pkgs.testers.runNixOSTest {
     machine.succeed("command -v openwhispr")
     machine.succeed("test -e /dev/uinput")
     machine.wait_for_unit("home-manager-alice.service")
-    machine.succeed("systemctl --user -M alice@ cat openwhispr.service")
+    machine.succeed("test -e /home/alice/.config/systemd/user/openwhispr.service")
     machine.wait_for_x()
     machine.wait_until_succeeds("systemctl --user -M alice@ is-active openwhispr.service")
     machine.wait_until_succeeds("pgrep -u alice -f -i 'openwhispr.*--no-sandbox'")
