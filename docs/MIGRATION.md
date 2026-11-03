@@ -1,8 +1,9 @@
-# Migrating from v1 to v2
+# Migrating from dryvist/nix-openwhispr
 
-v2 renames the Home Manager options, adds Linux support and NixOS and
-nix-darwin modules, and changes the flake URL to
-`github:jpe-nix/nix-openwhispr`.
+The flake now lives at `github:jpe-nix/nix-openwhispr`. This release renames
+the Home Manager options, adds Linux support, and adds NixOS and nix-darwin
+modules. Every earlier option name still evaluates and prints a warning, so
+the release stays on the `v1` major line.
 
 ## Who this is for
 
@@ -12,20 +13,21 @@ covered in the last section.
 
 ## Breaking changes
 
-- The flake URL is `github:jpe-nix/nix-openwhispr`; v1 used
-  `github:dryvist/nix-openwhispr`. Use `?ref=v2`.
-- The v1 option names still work and print a warning. Rename them as shown
-  below.
-- `programs.openwhispr.models` is a submodule. Set `models.package` instead of
-  assigning a package to `models`. Assigning a package fails with an error that
-  names the replacement.
+None in the module interface. Each earlier option name and value still
+evaluates and prints a warning that names its replacement. These changes need
+attention:
+
+- The flake URL moved to `github:jpe-nix/nix-openwhispr`. The earlier URL is
+  `github:dryvist/nix-openwhispr`. Keep `?ref=v1`.
+- `programs.openwhispr.models` is a submodule. A package assigned to `models`
+  still works: it becomes `models.package`, with a warning.
 - The launch agent label changed from `com.dryvist.nix-openwhispr` to
-  `com.jpe-nix.nix-openwhispr`. Activation runs `launchctl bootout` on the v1
-  agent's plist when that file exists, so the old and new agents do not run
+  `com.jpe-nix.nix-openwhispr`. Activation runs `launchctl bootout` on the
+  earlier agent's plist when that file exists, so the two agents do not run
   together. The module does not delete the old plist file.
 - When `apiKeyFiles` names a key file, the launch agent starts the
   `openwhispr-start` wrapper, which execs the application binary. Without key
-  files it starts the binary directly, as v1 did.
+  files it starts the binary directly, as before.
 - The module does not link or write the application's `.env` file in its data
   directory. Keys already there stay where they are. See
   [the environment section](options.md#environment-and-precedence).
@@ -41,7 +43,7 @@ covered in the last section.
 - `enable`: unchanged.
 - `package`: unchanged. Defaults to this flake's package for the host system.
 - `models`: now `models.package`, inside a submodule that also has
-  `models.bootstrap`.
+  `models.bootstrap`. A package still works; warns.
 - `modelBootstrap`: now `models.bootstrap`. Renamed; warns.
 - `autoStart`: now `autostart.enable`. Renamed; warns.
 - `localTranscriptionProvider`: now `transcription.provider`. Renamed; warns.
@@ -63,7 +65,7 @@ programs.openwhispr = {
 };
 ```
 
-After, with `github:jpe-nix/nix-openwhispr?ref=v2`:
+After, with `github:jpe-nix/nix-openwhispr?ref=v1`:
 
 ```nix
 programs.openwhispr = {
@@ -79,19 +81,18 @@ programs.openwhispr = {
 
 ## Steps
 
-1. Change the input URL to `github:jpe-nix/nix-openwhispr?ref=v2`.
+1. Change the input URL to `github:jpe-nix/nix-openwhispr?ref=v1`.
 2. Run `nix flake update nix-openwhispr`.
 3. Rebuild with your usual Home Manager or nix-darwin command.
-4. Read the warnings. Each one names the v2 option.
+4. Read the warnings. Each one names the new option.
 5. Rename each option using the mapping above, then rebuild. The warnings stop
-   when no v1 name remains.
+   when no earlier name remains.
 
 ## Rollback
 
 Set the input back to `github:dryvist/nix-openwhispr?ref=v1` and rebuild. The
-v1 tags stay on that repository, which remains readable. If the v2 launch
-agent is still loaded after the
-rollback, stop it:
+`v1` tags stay on that repository, which remains readable. If the new launch
+agent is still loaded after the rollback, stop it:
 
 ```sh
 launchctl print "gui/$(id -u)/com.jpe-nix.nix-openwhispr"
@@ -102,7 +103,6 @@ launchctl bootout "gui/$(id -u)/com.jpe-nix.nix-openwhispr"
 
 If you import upstream OpenWhispr's `nix/module.nix`,
 `programs.openwhispr.users` keeps its meaning: the listed users join the ydotool
-and uinput groups. To use
-this flake's module instead, import `nix-openwhispr.nixosModules.default`. Its
-`waylandPaste.enable` option, default `true`, turns on ydotool and uinput, as
-upstream's module does.
+and uinput groups. To use this flake's module instead, import
+`nix-openwhispr.nixosModules.default`. Its `waylandPaste.enable` option, default
+`true`, turns on ydotool and uinput, as upstream's module does.

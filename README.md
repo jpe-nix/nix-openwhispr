@@ -15,7 +15,7 @@ reimplement the application. The default path is local processing.
 Run the application without configuring anything:
 
 ```sh
-nix run "github:jpe-nix/nix-openwhispr?ref=v2"
+nix run "github:jpe-nix/nix-openwhispr?ref=v1"
 ```
 
 Home Manager, minimal configuration:
@@ -29,7 +29,7 @@ Home Manager, minimal configuration:
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nix-openwhispr = {
-      url = "github:jpe-nix/nix-openwhispr?ref=v2";
+      url = "github:jpe-nix/nix-openwhispr?ref=v1";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
@@ -161,9 +161,9 @@ contents are never copied into the store. A key saved in the application's own
 Settings is written to its data directory and takes precedence over
 `apiKeyFiles`; see [docs/options.md](docs/options.md).
 
-## Migrating from v1
+## Migrating from dryvist/nix-openwhispr
 
-The v1 option names still work and print a warning naming their replacement.
+The earlier option names still work and print a warning naming their replacement.
 The steps and the full mapping are in [docs/MIGRATION.md](docs/MIGRATION.md).
 
 ## Plan-boundary policy
