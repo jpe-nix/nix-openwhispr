@@ -69,7 +69,9 @@ jobs:
       - name: Build pinned local models
         run: nix build .#packages.aarch64-darwin.models --no-link
       - name: Build Home Manager integration
-        run: nix build .#checks.aarch64-darwin.module --no-link
+        run: nix build .#checks.aarch64-darwin.hm-defaults --no-link
+      - name: Build v1 compatibility and API key checks
+        run: nix build .#checks.aarch64-darwin.hm-v1-compat .#checks.aarch64-darwin.secrets --no-link
       - name: Inspect application bundle
         run: |
           app="$(cat package-path)/Applications/OpenWhispr.app"
@@ -83,6 +85,23 @@ jobs:
         with:
           name: openwhispr-ci-aarch64-darwin
           path: openwhispr-ci.zip*
+
+  linux-vm:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - name: Enable KVM for the NixOS test
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - uses: cachix/install-nix-action@448cde739abec1eaf0646249e3d25bb8d9bc7702 # v31
+        with:
+          extra_nix_config: |
+            extra-experimental-features = nix-command flakes
+            system-features = kvm nixos-test
+      - name: Build NixOS VM test and Linux Home Manager checks
+        run: nix build .#checks.x86_64-linux.nixos-vm .#checks.x86_64-linux.hm-defaults .#checks.x86_64-linux.hm-v1-compat .#checks.x86_64-linux.secrets -L
 
   codeql:
     runs-on: ubuntu-latest
