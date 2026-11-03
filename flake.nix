@@ -1,5 +1,5 @@
 {
-  description = "Reproducible macOS Nix integration for OpenWhispr";
+  description = "Reproducible Nix integration for OpenWhispr on macOS and Linux";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-26.05-darwin";
@@ -59,14 +59,10 @@
         {
           config,
           pkgs,
-          system,
           ...
         }:
         let
-          isDarwin = nixpkgs.lib.elem system [
-            "aarch64-darwin"
-            "x86_64-darwin"
-          ];
+          inherit (pkgs.stdenv.hostPlatform) isDarwin;
           launcher = pkgs.writeShellApplication {
             name = "openwhispr-launch";
             text = ''
@@ -83,7 +79,7 @@
           };
         in
         {
-          packages = nixpkgs.lib.optionalAttrs isDarwin (
+          packages =
             let
               openwhispr = pkgs.callPackage ./pkgs/openwhispr { };
               models = pkgs.callPackage ./pkgs/openwhispr-models { };
@@ -91,19 +87,27 @@
             {
               default = openwhispr;
               inherit models openwhispr;
-            }
-          );
+            };
 
-          apps = nixpkgs.lib.optionalAttrs isDarwin {
-            default = {
-              type = "app";
-              program = "${launcher}/bin/openwhispr-launch";
-            };
-            verify-local = {
-              type = "app";
-              program = "${verifier}/bin/openwhispr-verify-local";
-            };
-          };
+          apps =
+            if isDarwin then
+              {
+                default = {
+                  type = "app";
+                  program = "${launcher}/bin/openwhispr-launch";
+                };
+                verify-local = {
+                  type = "app";
+                  program = "${verifier}/bin/openwhispr-verify-local";
+                };
+              }
+            else
+              {
+                default = {
+                  type = "app";
+                  program = "${config.packages.default}/bin/openwhispr";
+                };
+              };
 
           checks = {
             publication =
