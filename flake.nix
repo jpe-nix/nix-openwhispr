@@ -123,6 +123,9 @@
             hm-defaults = import ./checks/hm-defaults.nix { inherit pkgs home-manager self; };
             hm-v1-compat = import ./checks/hm-v1-compat.nix { inherit pkgs home-manager self; };
             secrets = import ./checks/secrets.nix { inherit pkgs home-manager self; };
+          }
+          // pkgs.lib.optionalAttrs (pkgs.stdenv.hostPlatform.system == "x86_64-linux") {
+            nixos-vm = import ./checks/nixos-vm.nix { inherit pkgs home-manager self; };
           };
 
           devShells.default = pkgs.mkShell {
