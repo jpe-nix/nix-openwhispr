@@ -45,6 +45,6 @@ stdenvNoCC.mkDerivation {
   '';
   meta = {
     description = "Hash-pinned local speech, speaker, and semantic-search models for OpenWhispr";
-    platforms = lib.platforms.darwin;
+    platforms = lib.platforms.darwin ++ [ "x86_64-linux" ];
   };
 }
