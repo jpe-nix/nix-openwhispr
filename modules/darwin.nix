@@ -14,12 +14,9 @@ in
   options.programs.openwhispr = {
     enable = lib.mkEnableOption "OpenWhispr voice dictation app";
 
-    package = lib.mkOption {
-      type = lib.types.package;
-      default = self.packages.${pkgs.stdenv.hostPlatform.system}.openwhispr;
-      defaultText = lib.literalExpression "nix-openwhispr.packages.\${system}.openwhispr";
+    package = lib.mkPackageOption self.packages.${pkgs.stdenv.hostPlatform.system} "openwhispr" {
+      pkgsText = "nix-openwhispr.packages.\${system}";
       example = lib.literalExpression "pkgs.openwhispr";
-      description = "OpenWhispr application package. Defaults to this flake's package for the host system.";
     };
   };
 
