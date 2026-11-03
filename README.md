@@ -14,16 +14,21 @@ speaker diarization, voice fingerprints, notes, semantic search, local
 reasoning, audio import, and a menu-bar/tray application. Local processing is
 not subject to the hosted service's word quota.
 
-| Capability | Default path | Boundary |
-| --- | --- | --- |
-| Dictation and translation | Local models | Uses the Mac's local resources |
-| Meeting transcription | Local models | Requires microphone/system-audio permissions |
-| Speaker labels and voice fingerprints | Local ONNX models | Best supported on Apple Silicon |
-| Notes and semantic search | Local SQLite/vector data | Search quality depends on downloaded models |
-| AI agent | Local model or explicit provider | Provider credentials are user-selected |
-| API and MCP | Not exposed locally by this upstream desktop release | The hosted API/MCP service is account-backed and rate-limited |
-| Team spaces, hosted sharing, billing | Hosted service | Requires the upstream service/account |
-| Optional remote inference | Explicit LAN endpoint | Must be configured and authenticated separately |
+- **Dictation and translation**: local models. Uses the Mac's local resources.
+- **Meeting transcription**: local models. Requires microphone and system-audio
+  permissions.
+- **Speaker labels and voice fingerprints**: local ONNX models. Best supported
+  on Apple Silicon.
+- **Notes and semantic search**: local SQLite/vector data. Search quality
+  depends on downloaded models.
+- **AI agent**: local model or explicit provider. Provider credentials are
+  user-selected.
+- **API and MCP**: not exposed locally by this upstream desktop release. The
+  hosted API/MCP service is account-backed and rate-limited.
+- **Team spaces, hosted sharing, billing**: hosted service. Requires the
+  upstream service/account.
+- **Optional remote inference**: explicit LAN endpoint. Must be configured and
+  authenticated separately.
 
 No local word, duration, speaker-count, retention, or subscription limit is
 introduced by this package. Intel Macs are supported for the application where

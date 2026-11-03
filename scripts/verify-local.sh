@@ -10,9 +10,12 @@ else
     "$HOME/Applications/Home Manager Apps/OpenWhispr.app" \
     "$HOME/.nix-profile/Applications/OpenWhispr.app" \
     "/Applications/OpenWhispr.app"; do
-    if [[ -d "$candidate" ]]; then app_path="$candidate"; break; fi
+    if [[ -d $candidate ]]; then
+      app_path="$candidate"
+      break
+    fi
   done
-  [[ -n "$app_path" ]] || app_path="$HOME/Applications/OpenWhispr.app"
+  [[ -n $app_path ]] || app_path="$HOME/Applications/OpenWhispr.app"
 fi
 test -d "$app_path"
 test -x "$app_path/Contents/MacOS/OpenWhispr"
