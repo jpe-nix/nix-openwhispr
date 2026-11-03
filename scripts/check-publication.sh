@@ -13,7 +13,8 @@ forbidden=$(printf '\\x73\\x63\\x72\\x65\\x65\\x6e\\x70\\x69\\x70\\x65')
 matches=$(rg -n -i "$forbidden|private/dryvist|jacobpevans|\\.local\\.md|GH_PAT|DOPPLER" \
   --glob '!scripts/check-publication.sh' \
   --glob '!result/**' \
-  . | rg -v '^\./renovate\.json:[0-9]+:  "extends": \["github>JacobPEvans/\.github:renovate-nix"\]$' || true)
+  . | rg -v '^\./renovate\.json:[0-9]+:  "extends": \["github>JacobPEvans/\.github:renovate-nix"\]$' |
+  rg -v '^\./README\.md:[0-9]+:Documentation: <https://docs\.jacobpevans\.com>$' || true)
 if [ -n "$matches" ]; then
   printf '%s\n' "$matches"
   echo "forbidden private or secret-bearing publication content found" >&2
