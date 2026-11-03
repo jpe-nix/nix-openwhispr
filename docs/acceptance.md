@@ -12,8 +12,8 @@ mark it passed because the application opened.
 ## Install and lifecycle
 
 ```sh
-nix run "github:dryvist/nix-openwhispr?ref=vN"
-nix run "github:dryvist/nix-openwhispr?ref=vN#verify-local"
+nix run "github:jpe-nix/nix-openwhispr?ref=vN"
+nix run "github:jpe-nix/nix-openwhispr?ref=vN#verify-local"
 ```
 
 - [ ] The package hash and bundle identifier match the release metadata.

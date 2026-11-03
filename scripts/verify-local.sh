@@ -26,7 +26,7 @@ bundle_id=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$app_path/Co
 version=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$app_path/Contents/Info.plist")
 printf 'bundle=%s version=%s\n' "$bundle_id" "$version"
 
-if launchctl print "gui/$(id -u)/com.dryvist.nix-openwhispr" >/dev/null 2>&1; then
+if launchctl print "gui/$(id -u)/com.jpe-nix.nix-openwhispr" >/dev/null 2>&1; then
   echo 'launchd=open'
 else
   echo 'launchd=not-loaded'

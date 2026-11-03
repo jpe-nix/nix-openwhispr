@@ -11,9 +11,11 @@ integration for the upstream OpenWhispr application.
 - Keep cloud, team, billing, and hosted API behavior explicitly service-backed.
 - Infrastructure belongs in the owning OpenTofu repository; guest configuration
   belongs in the owning Ansible repository.
-- Launchd jobs start a distinctly named executable (the application binary), never
-  `/bin/sh`, `bash`, `env`, or another interpreter; privacy (TCC) access belongs to that
-  named binary only.
+- Launchd jobs start a distinctly named executable (the application
+  binary), never `/bin/sh`, `bash`, `env`, or another interpreter; privacy
+  (TCC) access belongs to that named binary only. The one exception is
+  `apiKeyFiles`: launchd cannot read a file into an environment variable, so
+  the agent then runs `openwhispr-start`, which execs the application binary.
 - Never commit credentials, private host details, local-machine paths, or
   private project identifiers.
 
