@@ -3,37 +3,41 @@
 Upstream OpenWhispr reads its settings from environment variables. This page
 maps each variable in upstream's `.env.example` at the v1.11.0 tag, plus the
 local-transcription variables and `OPENWHISPR_CHANNEL` that the application
-reads from its code, to the typed option that sets it.
+reads from its code, to the option that sets it. Each entry is marked exposed
+or omitted.
 
 Status values:
 
-- `typed`: set by the typed option named in the entry.
-- `secret path`: `apiKeyFiles` holds a path; the file is read at start.
+- `exposed`: set by the typed option named in the entry.
+- `exposed (secret path)`: `apiKeyFiles` holds a path; the file is read at
+  start.
 - `fixed`: set by the module; not configurable.
-- Not typed: set through the freeform `settings` option.
+- `omitted`: no typed option; set it through the freeform `settings` option.
 
 ## Upstream variables
 
-- `VITE_AUTH_URL` ([`.env.example` L3][env-3]): typed as `endpoints.authUrl`.
-- `VITE_OPENWHISPR_API_URL` ([L6][env-6]): typed as `endpoints.apiUrl`.
-- `OPENAI_API_KEY` ([L10][env-10]): secret path, `apiKeyFiles.openai`.
-- `WHISPER_MODEL` ([L14][env-14]): not typed. It names an OpenAI cloud model;
+- `VITE_AUTH_URL` ([`.env.example` L3][env-3]): exposed as `endpoints.authUrl`.
+- `VITE_OPENWHISPR_API_URL` ([L6][env-6]): exposed as `endpoints.apiUrl`.
+- `OPENAI_API_KEY` ([L10][env-10]): exposed (secret path), `apiKeyFiles.openai`.
+- `WHISPER_MODEL` ([L14][env-14]): omitted. It names an OpenAI cloud model;
   set it with `settings.WHISPER_MODEL`. Local Whisper is
   `LOCAL_WHISPER_MODEL`.
-- `LANGUAGE` ([L18][env-18]): typed as `language`.
-- `UI_LANGUAGE` ([L21][env-21]): typed as `uiLanguage`.
+- `LANGUAGE` ([L18][env-18]): exposed as `language`.
+- `UI_LANGUAGE` ([L21][env-21]): exposed as `uiLanguage`.
 - `ANTHROPIC_API_KEY` ([L25][env-25]): secret path,
   `apiKeyFiles.anthropic`.
-- `GEMINI_API_KEY` ([L29][env-29]): secret path, `apiKeyFiles.gemini`.
-- `GROQ_API_KEY` ([L33][env-33]): secret path, `apiKeyFiles.groq`.
-- `TINFOIL_API_KEY` ([L37][env-37]): secret path, `apiKeyFiles.tinfoil`.
-- `MISTRAL_API_KEY` ([L41][env-41]): secret path, `apiKeyFiles.mistral`.
-- `OPENWHISPR_LOG_LEVEL` ([L44][env-44]): typed as `logLevel`.
-- `LOCAL_TRANSCRIPTION_PROVIDER` ([main.js L1461][main-1461]): typed as
+- `GEMINI_API_KEY` ([L29][env-29]): exposed (secret path), `apiKeyFiles.gemini`.
+- `GROQ_API_KEY` ([L33][env-33]): exposed (secret path), `apiKeyFiles.groq`.
+- `TINFOIL_API_KEY` ([L37][env-37]): exposed (secret path),
+  `apiKeyFiles.tinfoil`.
+- `MISTRAL_API_KEY` ([L41][env-41]): exposed (secret path),
+  `apiKeyFiles.mistral`.
+- `OPENWHISPR_LOG_LEVEL` ([L44][env-44]): exposed as `logLevel`.
+- `LOCAL_TRANSCRIPTION_PROVIDER` ([main.js L1461][main-1461]): exposed as
   `transcription.provider`.
-- `LOCAL_WHISPER_MODEL` ([main.js L1462][main-1462]): typed as
+- `LOCAL_WHISPER_MODEL` ([main.js L1462][main-1462]): exposed as
   `transcription.whisperModel`.
-- `PARAKEET_MODEL` ([main.js L1470][main-1470]): typed as
+- `PARAKEET_MODEL` ([main.js L1470][main-1470]): exposed as
   `transcription.parakeetModel`.
 - `OPENWHISPR_CHANNEL` ([main.js L72][main-72]): fixed to `production`.
 
