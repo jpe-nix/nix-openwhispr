@@ -7,51 +7,70 @@
       url = "github:nix-community/home-manager/release-26.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    flake-parts = {
+      url = "github:hercules-ci/flake-parts";
+      inputs.nixpkgs-lib.follows = "nixpkgs";
+    };
+    nix-devenv = {
+      url = "github:dryvist/nix-devenv?ref=v0";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        dryvist-github.follows = "dryvist-github";
+      };
+    };
+    dryvist-github = {
+      url = "github:dryvist/.github?ref=v1";
+      flake = false;
+    };
   };
 
   outputs =
-    {
+    inputs@{
       self,
       nixpkgs,
       home-manager,
+      flake-parts,
+      nix-devenv,
+      ...
     }:
-    let
-      darwinSystems = [
+    flake-parts.lib.mkFlake { inherit inputs; } {
+      systems = [
         "aarch64-darwin"
         "x86_64-darwin"
-      ];
-      allSystems = [
-        "aarch64-darwin"
-        "x86_64-darwin"
-        "aarch64-linux"
         "x86_64-linux"
       ];
-      forDarwinSystems = nixpkgs.lib.genAttrs darwinSystems;
-      forAllSystems = nixpkgs.lib.genAttrs allSystems;
-    in
-    {
-      packages = forDarwinSystems (
-        system:
-        let
-          pkgs = nixpkgs.legacyPackages.${system};
-          openwhispr = pkgs.callPackage ./pkgs/openwhispr { };
-          models = pkgs.callPackage ./pkgs/openwhispr-models { };
-        in
-        {
-          default = openwhispr;
-          inherit models openwhispr;
-        }
-      );
 
-      apps = forDarwinSystems (
-        system:
+      imports = [ nix-devenv.flakeModules.nix ];
+
+      flake = {
+        overlays.default = final: _prev: {
+          openwhispr = final.callPackage ./pkgs/openwhispr { };
+          openwhispr-models = final.callPackage ./pkgs/openwhispr-models { };
+        };
+        homeManagerModules.default = import ./modules/home-manager.nix;
+        homeModules.default = self.homeManagerModules.default;
+        templates.default = {
+          path = ./templates/default;
+          description = "Home Manager configuration using nix-openwhispr";
+        };
+      };
+
+      perSystem =
+        {
+          config,
+          pkgs,
+          system,
+          ...
+        }:
         let
-          pkgs = nixpkgs.legacyPackages.${system};
-          package = self.packages.${system}.default;
+          isDarwin = nixpkgs.lib.elem system [
+            "aarch64-darwin"
+            "x86_64-darwin"
+          ];
           launcher = pkgs.writeShellApplication {
             name = "openwhispr-launch";
             text = ''
-              exec /usr/bin/open -na "${package}/Applications/OpenWhispr.app" --args "$@"
+              exec /usr/bin/open -na "${config.packages.default}/Applications/OpenWhispr.app" --args "$@"
             '';
           };
           verifier = pkgs.writeShellApplication {
@@ -64,26 +83,45 @@
           };
         in
         {
-          default = {
-            type = "app";
-            program = "${launcher}/bin/openwhispr-launch";
-          };
-          verify-local = {
-            type = "app";
-            program = "${verifier}/bin/openwhispr-verify-local";
-          };
-        }
-      );
+          packages = nixpkgs.lib.optionalAttrs isDarwin (
+            let
+              openwhispr = pkgs.callPackage ./pkgs/openwhispr { };
+              models = pkgs.callPackage ./pkgs/openwhispr-models { };
+            in
+            {
+              default = openwhispr;
+              inherit models openwhispr;
+            }
+          );
 
-      homeManagerModules.default = import ./modules/home-manager.nix;
+          apps = nixpkgs.lib.optionalAttrs isDarwin {
+            default = {
+              type = "app";
+              program = "${launcher}/bin/openwhispr-launch";
+            };
+            verify-local = {
+              type = "app";
+              program = "${verifier}/bin/openwhispr-verify-local";
+            };
+          };
 
-      devShells = forAllSystems (
-        system:
-        let
-          pkgs = nixpkgs.legacyPackages.${system};
-        in
-        {
-          default = pkgs.mkShell {
+          checks = {
+            publication =
+              pkgs.runCommand "openwhispr-publication-check"
+                {
+                  nativeBuildInputs = [ pkgs.ripgrep ];
+                }
+                ''
+                  bash ${self}/scripts/check-publication.sh
+                  touch $out
+                '';
+          }
+          // nixpkgs.lib.optionalAttrs isDarwin {
+            module = import ./checks/hm-defaults.nix { inherit pkgs home-manager; };
+          };
+
+          devShells.default = pkgs.mkShell {
+            inputsFrom = [ config.pre-commit.devShell ];
             packages = with pkgs; [
               nixfmt
               statix
@@ -92,44 +130,6 @@
               ripgrep
             ];
           };
-        }
-      );
-
-      checks = forAllSystems (
-        system:
-        let
-          pkgs = nixpkgs.legacyPackages.${system};
-        in
-        {
-          publication =
-            pkgs.runCommand "openwhispr-publication-check"
-              {
-                nativeBuildInputs = [ pkgs.ripgrep ];
-              }
-              ''
-                bash ${self}/scripts/check-publication.sh
-                touch $out
-              '';
-        }
-        // nixpkgs.lib.optionalAttrs (nixpkgs.lib.elem system darwinSystems) {
-          module =
-            (home-manager.lib.homeManagerConfiguration {
-              inherit pkgs;
-              modules = [
-                ./modules/home-manager.nix
-                {
-                  home = {
-                    username = "ci";
-                    homeDirectory = "/Users/ci";
-                    stateVersion = "26.05";
-                  };
-                  programs.openwhispr.enable = true;
-                }
-              ];
-            }).activationPackage;
-        }
-      );
-
-      formatter = forAllSystems (system: nixpkgs.legacyPackages.${system}.nixfmt-tree);
+        };
     };
 }
